@@ -1,7 +1,18 @@
 import Tour from "./Tour";
-import Loading from "./Loading";
-const Tours = ({ name, info, image, price }) => {
-  return <Tour name={name} info={info} image={image} price={price} />;
+import { useState } from "react";
+
+const Tours = ({ tours, removeTour }) => {
+  return (
+    <>
+      <h3 className="title">Our Tours</h3>
+      <div className="title-underline"></div>
+      <div className="tours">
+        {tours.map((tour) => {
+          return <Tour key={tour.id} {...tour} removeTour={removeTour} />;
+        })}
+      </div>
+    </>
+  );
 };
 
 export default Tours;

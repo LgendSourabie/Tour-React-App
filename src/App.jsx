@@ -5,38 +5,55 @@ import { useEffect, useState } from "react";
 const url = "https://course-api.com/react-tours-project";
 const App = () => {
   const [isLoading, setIsloading] = useState(true);
-  const [tours, setTour] = useState("");
-
+  const [tours, setTours] = useState("");
   // Stop Loading after 5 sec
-  useEffect(() => {
-    setTimeout(() => {
-      setIsloading(false);
-    }, 5000);
 
-    const getData = async () => {
+  const removeTour = (id) => {
+    const filterTours = tours.filter((tour) => tour["id"] !== id);
+    setTours(filterTours);
+  };
+
+  const getData = async () => {
+    setIsloading(true);
+    try {
       const response = await fetch(url);
       const responseToJson = await response.json();
-      setTour(responseToJson);
-    };
+      setTours(responseToJson);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsloading(false);
+  };
 
+  useEffect(() => {
     // getData();
   }, []);
 
   // Show is Loading at the start
   if (isLoading) {
-    return <Loading />;
+    return (
+      <main>
+        <Loading />
+      </main>
+    );
   }
+
+  if (tours.length === 0) {
+    return (
+      <div className="title">
+        <h2>No Tours Left</h2>
+        <button className="btn" onClick={getData}>
+          refresh
+        </button>
+      </div>
+    );
+  }
+
   // After 5 sec render the Tour components
   return (
-    <div>
-      <h2>Our Tours</h2>
-      {tours.map((tour) => {
-        const { id, image, info, name, price } = tour;
-        return (
-          <Tours key={id} image={image} info={info} name={name} price={price} />
-        );
-      })}
-    </div>
+    <main>
+      <Tours tours={tours} removeTour={removeTour} />
+    </main>
   );
 };
 export default App;
